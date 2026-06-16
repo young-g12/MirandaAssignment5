@@ -1,4 +1,5 @@
 #include "Platform.h"
+
 #include <allegro5/allegro_primitives.h>
 
 Platform::Platform(

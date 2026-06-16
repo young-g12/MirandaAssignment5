@@ -1,4 +1,5 @@
 #include "Player.h"
+
 #include <allegro5/allegro_primitives.h>
 
 Player::Player()
@@ -13,6 +14,9 @@ Player::Player()
     velY = 0;
 
     onGround = false;
+
+    score = 0;
+    health = 100;
 }
 
 void Player::update()

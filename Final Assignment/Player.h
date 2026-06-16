@@ -15,8 +15,12 @@ public:
 
     bool onGround;
 
+    int score;
+    int health;
+
     Player();
 
     void update();
+
     void draw(float cameraX);
 };
