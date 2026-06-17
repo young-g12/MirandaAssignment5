@@ -1,14 +1,17 @@
 #include "Player.h"
 
+
 #include <allegro5/allegro_primitives.h>
+#include <allegro5/allegro_image.h>
+#include <cstdio>
 
 Player::Player()
 {
     x = 100;
     y = 300;
 
-    width = 50;
-    height = 50;
+    width = 96;
+    height = 96;
 
     velX = 0;
     velY = 0;
@@ -19,11 +22,29 @@ Player::Player()
     health = 100;
 
     invincibilityFrames = 0;
+
+    currentFrame = 0;
+    frameTimer = 0;
+
+    idleSprite =
+        al_load_bitmap(
+            "C:/Users/gmira/source/repos/Final Assignment/x64/Debug/Dude_Monster_Idle_4.png");
+
+    if (!idleSprite)
+    {
+        printf("FAILED TO LOAD PLAYER SPRITE\n");
+    }
+    else
+    {
+        printf("PLAYER SPRITE LOADED\n");
+    }
+        
+
 }
 
 void Player::update()
 {
-    velY += 0.5f;
+    velY += 0.4f;
 
     x += velX;
     y += velY;
@@ -32,18 +53,41 @@ void Player::update()
     {
         invincibilityFrames--;
     }
+
+    frameTimer++;
+
+    if (frameTimer >= 10)
+    {
+        frameTimer = 0;
+
+        currentFrame++;
+
+        if (currentFrame >= 4)
+        {
+            currentFrame = 0;
+        }
+    }
 }
 
 void Player::draw(float cameraX)
 {
-    if (invincibilityFrames > 0)
+    if (idleSprite)
     {
-        al_draw_filled_rectangle(
+        al_draw_scaled_bitmap(
+            idleSprite,
+
+            currentFrame * 32,
+            0,
+            32,
+            32,
+
             x - cameraX,
             y,
-            x + width - cameraX,
-            y + height,
-            al_map_rgb(255, 255, 0));
+
+            width,
+            height,
+
+            0);
     }
     else
     {
@@ -53,5 +97,6 @@ void Player::draw(float cameraX)
             x + width - cameraX,
             y + height,
             al_map_rgb(0, 255, 0));
+
     }
 }

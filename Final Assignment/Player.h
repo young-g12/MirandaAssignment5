@@ -1,5 +1,7 @@
 #pragma once
 
+#include <allegro5/allegro.h>
+
 class Player
 {
 public:
@@ -19,6 +21,11 @@ public:
     int health;
 
     int invincibilityFrames;
+
+    int currentFrame;
+    int frameTimer;
+
+    ALLEGRO_BITMAP* idleSprite;
 
     Player();
 

@@ -3,6 +3,7 @@
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
+#include <allegro5/allegro_image.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
 
@@ -159,6 +160,7 @@ void loadLevel(
 int main()
 {
     al_init();
+    al_init_image_addon();
     al_install_keyboard();
 
     al_init_primitives_addon();
@@ -386,7 +388,7 @@ int main()
                     }
                     else
                     {
-                        running = false;
+                        gameState = WIN;
                     }
                 }
 
@@ -419,7 +421,7 @@ int main()
 
                 if (player.health <= 0)
                 {
-                    running = false;
+                    gameState = GAMEOVER;
                 }
 
                 cameraX =
@@ -479,6 +481,7 @@ int main()
             }
             else if (gameState == PLAYING)
             {
+
                 al_clear_to_color(
                     al_map_rgb(40, 40, 70));
 
@@ -533,7 +536,66 @@ int main()
                     "Level: %d",
                     currentLevel);
             }
+            else if (gameState == WIN)
+            {
+                al_clear_to_color(
+                    al_map_rgb(0, 80, 0));
 
+                al_draw_text(
+                    font,
+                    al_map_rgb(255, 255, 255),
+                    SCREEN_W / 2,
+                    200,
+                    ALLEGRO_ALIGN_CENTER,
+                    "YOU ESCAPED!");
+
+                al_draw_textf(
+                    font,
+                    al_map_rgb(255, 255, 255),
+                    SCREEN_W / 2,
+                    280,
+                    ALLEGRO_ALIGN_CENTER,
+                    "Final Score: %d",
+                    player.score);
+
+                al_draw_text(
+                    font,
+                    al_map_rgb(255, 255, 255),
+                    SCREEN_W / 2,
+                    350,
+                    ALLEGRO_ALIGN_CENTER,
+                    "Congratulations!");
+            }
+            else if (gameState == GAMEOVER)
+            {
+                al_clear_to_color(
+                    al_map_rgb(80, 0, 0));
+
+                al_draw_text(
+                    font,
+                    al_map_rgb(255, 255, 255),
+                    SCREEN_W / 2,
+                    200,
+                    ALLEGRO_ALIGN_CENTER,
+                    "GAME OVER");
+
+                al_draw_textf(
+                    font,
+                    al_map_rgb(255, 255, 255),
+                    SCREEN_W / 2,
+                    280,
+                    ALLEGRO_ALIGN_CENTER,
+                    "Score: %d",
+                    player.score);
+
+                al_draw_text(
+                    font,
+                    al_map_rgb(255, 255, 255),
+                    SCREEN_W / 2,
+                    350,
+                    ALLEGRO_ALIGN_CENTER,
+                    "Better luck next time!");
+                    }
             al_flip_display();
         }
 

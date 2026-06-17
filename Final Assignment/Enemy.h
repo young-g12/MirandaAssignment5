@@ -1,4 +1,5 @@
 #pragma once
+#include <allegro5/allegro.h>
 
 class Enemy
 {
@@ -14,6 +15,11 @@ public:
     float rightBound;
 
     float speed;
+
+    ALLEGRO_BITMAP* sprite;
+
+    int currentFrame;
+    int frameTimer;
 
     Enemy(
         float startX,
