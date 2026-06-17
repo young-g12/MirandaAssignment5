@@ -16,12 +16,21 @@ using namespace std;
 const int SCREEN_W = 1280;
 const int SCREEN_H = 720;
 
+enum GameState
+{
+    INTRO,
+    PLAYING,
+    WIN,
+    GAMEOVER
+};
+
 enum Keys
 {
     LEFT,
     RIGHT,
     UP,
-    ESC
+    ESC,
+    ENTER
 };
 
 void loadLevel(
@@ -46,7 +55,7 @@ void loadLevel(
             Platform(700, 450, 200, 20));
 
         platforms.push_back(
-            Platform(1200, 350, 200, 20));
+            Platform(1000, 350, 200, 20));
 
         collectibles.push_back(
             Collectible(350, 500));
@@ -55,7 +64,7 @@ void loadLevel(
             Collectible(750, 400));
 
         collectibles.push_back(
-            Collectible(1250, 300));
+            Collectible(1050, 300));
 
         enemies.push_back(
             Enemy(600, 600, 500, 900));
@@ -189,9 +198,10 @@ int main()
     bool running = true;
     bool redraw = true;
 
-    bool keys[4] = { false };
+    bool keys[5] = { false };
 
     Player player;
+    GameState gameState = INTRO;
 
     int currentLevel = 1;
 
@@ -242,6 +252,10 @@ int main()
             case ALLEGRO_KEY_ESCAPE:
                 keys[ESC] = true;
                 break;
+
+            case ALLEGRO_KEY_ENTER:
+                keys[ENTER] = true;
+                break;
             }
             break;
 
@@ -264,205 +278,261 @@ int main()
             case ALLEGRO_KEY_ESCAPE:
                 keys[ESC] = false;
                 break;
+
+            case ALLEGRO_KEY_ENTER:
+                keys[ENTER] = false;
+                break;
             }
             break;
 
         case ALLEGRO_EVENT_TIMER:
 
-            if (keys[LEFT])
-                player.velX = -5;
-            else if (keys[RIGHT])
-                player.velX = 5;
-            else
-                player.velX = 0;
-
-            if (keys[UP] &&
-                player.onGround)
+            if (gameState == INTRO)
             {
-                player.velY = -12;
-                player.onGround = false;
-            }
-
-            player.update();
-
-            player.onGround = false;
-
-            for (auto& platform : platforms)
-            {
-                if (
-                    player.x + player.width > platform.x &&
-                    player.x < platform.x + platform.width &&
-                    player.y + player.height >= platform.y &&
-                    player.y + player.height <= platform.y + 20 &&
-                    player.velY >= 0)
+                if (keys[ENTER])
                 {
-                    player.y =
-                        platform.y -
-                        player.height;
-
-                    player.velY = 0;
-                    player.onGround = true;
+                    gameState = PLAYING;
                 }
+
+                redraw = true;
+                break;
             }
-
-            for (auto& c : collectibles)
+            if (gameState == PLAYING)
             {
-                c.update();
-
-                if (c.collected)
-                    continue;
-
-                float dx =
-                    (player.x + player.width / 2) - c.x;
-
-                float dy =
-                    (player.y + player.height / 2) - c.y;
-
-                float distance =
-                    sqrt(dx * dx + dy * dy);
-
-                if (distance < 40)
-                {
-                    c.collected = true;
-                    player.score += 100;
-                }
-            }
-
-            bool allCollected = true;
-
-            for (auto& c : collectibles)
-            {
-                if (!c.collected)
-                {
-                    allCollected = false;
-                    break;
-                }
-            }
-
-            if (allCollected)
-            {
-                currentLevel++;
-
-                player.x = 100;
-                player.y = 300;
-
-                if (currentLevel <= 3)
-                {
-                    loadLevel(
-                        currentLevel,
-                        platforms,
-                        collectibles,
-                        enemies);
-                }
+                if (keys[LEFT])
+                    player.velX = -5;
+                else if (keys[RIGHT])
+                    player.velX = 5;
                 else
+                    player.velX = 0;
+
+                if (keys[UP] &&
+                    player.onGround)
+                {
+                    player.velY = -18;
+                    player.onGround = false;
+                }
+
+                player.update();
+
+                player.onGround = false;
+
+                for (auto& platform : platforms)
+                {
+                    if (
+                        player.x + player.width > platform.x &&
+                        player.x < platform.x + platform.width &&
+                        player.y + player.height >= platform.y &&
+                        player.y + player.height <= platform.y + 20 &&
+                        player.velY >= 0)
+                    {
+                        player.y =
+                            platform.y -
+                            player.height;
+
+                        player.velY = 0;
+                        player.onGround = true;
+                    }
+                }
+
+                for (auto& c : collectibles)
+                {
+                    c.update();
+
+                    if (c.collected)
+                        continue;
+
+                    float dx =
+                        (player.x + player.width / 2) - c.x;
+
+                    float dy =
+                        (player.y + player.height / 2) - c.y;
+
+                    float distance =
+                        sqrt(dx * dx + dy * dy);
+
+                    if (distance < 40)
+                    {
+                        c.collected = true;
+                        player.score += 100;
+                    }
+                }
+
+                bool allCollected = true;
+
+                for (auto& c : collectibles)
+                {
+                    if (!c.collected)
+                    {
+                        allCollected = false;
+                        break;
+                    }
+                }
+
+                if (allCollected)
+                {
+                    currentLevel++;
+
+                    player.x = 100;
+                    player.y = 300;
+
+                    if (currentLevel <= 3)
+                    {
+                        loadLevel(
+                            currentLevel,
+                            platforms,
+                            collectibles,
+                            enemies);
+                    }
+                    else
+                    {
+                        running = false;
+                    }
+                }
+
+                for (auto& enemy : enemies)
+                {
+                    enemy.update();
+                }
+
+                for (auto& enemy : enemies)
+                {
+                    bool collision =
+                        player.x < enemy.x + enemy.width &&
+                        player.x + player.width > enemy.x &&
+                        player.y < enemy.y + enemy.height &&
+                        player.y + player.height > enemy.y;
+
+                    if (collision &&
+                        player.invincibilityFrames == 0)
+                    {
+                        player.health -= 10;
+
+                        player.invincibilityFrames = 60;
+
+                        if (player.health < 0)
+                        {
+                            player.health = 0;
+                        }
+                    }
+                }
+
+                if (player.health <= 0)
                 {
                     running = false;
                 }
-            }
 
-            for (auto& enemy : enemies)
-            {
-                enemy.update();
-            }
+                cameraX =
+                    player.x -
+                    SCREEN_W / 2;
 
-            for (auto& enemy : enemies)
-            {
-                bool collision =
-                    player.x < enemy.x + enemy.width &&
-                    player.x + player.width > enemy.x &&
-                    player.y < enemy.y + enemy.height &&
-                    player.y + player.height > enemy.y;
-
-                if (collision &&
-                    player.invincibilityFrames == 0)
+                if (cameraX < 0)
                 {
-                    player.health -= 10;
-
-                    player.invincibilityFrames = 60;
-
-                    if (player.health < 0)
-                    {
-                        player.health = 0;
-                    }
+                    cameraX = 0;
                 }
+
+                redraw = true;
+                break;
             }
-
-            if (player.health <= 0)
-            {
-                running = false;
-            }
-
-            cameraX =
-                player.x -
-                SCREEN_W / 2;
-
-            if (cameraX < 0)
-            {
-                cameraX = 0;
-            }
-
-            redraw = true;
-            break;
         }
-
         if (redraw &&
             al_is_event_queue_empty(queue))
         {
             redraw = false;
 
-            al_clear_to_color(
-                al_map_rgb(40, 40, 70));
-
-            for (auto& platform : platforms)
+            if (gameState == INTRO)
             {
-                platform.draw(cameraX);
-            }
+                al_clear_to_color(
+                    al_map_rgb(20, 20, 40));
 
-            for (auto& c : collectibles)
+                al_draw_text(
+                    font,
+                    al_map_rgb(255, 255, 255),
+                    SCREEN_W / 2,
+                    150,
+                    ALLEGRO_ALIGN_CENTER,
+                    "ESCAPE THE FACILITY");
+
+                al_draw_text(
+                    font,
+                    al_map_rgb(255, 255, 255),
+                    SCREEN_W / 2,
+                    250,
+                    ALLEGRO_ALIGN_CENTER,
+                    "Collect all coins");
+
+                al_draw_text(
+                    font,
+                    al_map_rgb(255, 255, 255),
+                    SCREEN_W / 2,
+                    300,
+                    ALLEGRO_ALIGN_CENTER,
+                    "Avoid enemies");
+
+                al_draw_text(
+                    font,
+                    al_map_rgb(255, 255, 255),
+                    SCREEN_W / 2,
+                    400,
+                    ALLEGRO_ALIGN_CENTER,
+                    "Press ENTER to Start");
+            }
+            else if (gameState == PLAYING)
             {
-                c.draw(cameraX);
+                al_clear_to_color(
+                    al_map_rgb(40, 40, 70));
+
+                for (auto& platform : platforms)
+                {
+                    platform.draw(cameraX);
+                }
+
+                for (auto& c : collectibles)
+                {
+                    c.draw(cameraX);
+                }
+
+                for (auto& enemy : enemies)
+                {
+                    enemy.draw(cameraX);
+                }
+
+                player.draw(cameraX);
+
+                al_draw_filled_rectangle(
+                    0,
+                    0,
+                    SCREEN_W,
+                    40,
+                    al_map_rgb(0, 0, 0));
+
+                al_draw_textf(
+                    font,
+                    al_map_rgb(255, 255, 255),
+                    20,
+                    10,
+                    0,
+                    "Score: %d",
+                    player.score);
+
+                al_draw_textf(
+                    font,
+                    al_map_rgb(255, 255, 255),
+                    220,
+                    10,
+                    0,
+                    "Health: %d",
+                    player.health);
+
+                al_draw_textf(
+                    font,
+                    al_map_rgb(255, 255, 255),
+                    450,
+                    10,
+                    0,
+                    "Level: %d",
+                    currentLevel);
             }
-
-            for (auto& enemy : enemies)
-            {
-                enemy.draw(cameraX);
-            }
-
-            player.draw(cameraX);
-
-            al_draw_filled_rectangle(
-                0,
-                0,
-                SCREEN_W,
-                40,
-                al_map_rgb(0, 0, 0));
-
-            al_draw_textf(
-                font,
-                al_map_rgb(255, 255, 255),
-                20,
-                10,
-                0,
-                "Score: %d",
-                player.score);
-
-            al_draw_textf(
-                font,
-                al_map_rgb(255, 255, 255),
-                220,
-                10,
-                0,
-                "Health: %d",
-                player.health);
-
-            al_draw_textf(
-                font,
-                al_map_rgb(255, 255, 255),
-                450,
-                10,
-                0,
-                "Level: %d",
-                currentLevel);
 
             al_flip_display();
         }
