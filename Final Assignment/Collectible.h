@@ -1,4 +1,5 @@
 #pragma once
+#include <allegro5/allegro.h>
 
 class Collectible
 {
@@ -12,6 +13,8 @@ public:
     bool collected;
 
     float angle;
+
+    ALLEGRO_BITMAP* sprite;
 
     Collectible(
         float px,
