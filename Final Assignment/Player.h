@@ -18,6 +18,8 @@ public:
     int score;
     int health;
 
+    int invincibilityFrames;
+
     Player();
 
     void update();

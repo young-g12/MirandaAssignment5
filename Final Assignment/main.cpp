@@ -9,6 +9,7 @@
 #include "Player.h"
 #include "Platform.h"
 #include "Collectible.h"
+#include "Enemy.h"
 
 using namespace std;
 
@@ -23,6 +24,129 @@ enum Keys
     ESC
 };
 
+void loadLevel(
+    int level,
+    vector<Platform>& platforms,
+    vector<Collectible>& collectibles,
+    vector<Enemy>& enemies)
+{
+    platforms.clear();
+    collectibles.clear();
+    enemies.clear();
+
+    if (level == 1)
+    {
+        platforms.push_back(
+            Platform(0, 650, 3000, 70));
+
+        platforms.push_back(
+            Platform(300, 550, 200, 20));
+
+        platforms.push_back(
+            Platform(700, 450, 200, 20));
+
+        platforms.push_back(
+            Platform(1200, 350, 200, 20));
+
+        collectibles.push_back(
+            Collectible(350, 500));
+
+        collectibles.push_back(
+            Collectible(750, 400));
+
+        collectibles.push_back(
+            Collectible(1250, 300));
+
+        enemies.push_back(
+            Enemy(600, 600, 500, 900));
+
+        enemies.push_back(
+            Enemy(1500, 600, 1400, 1800));
+    }
+    else if (level == 2)
+    {
+        platforms.push_back(
+            Platform(0, 650, 3500, 70));
+
+        platforms.push_back(
+            Platform(400, 550, 200, 20));
+
+        platforms.push_back(
+            Platform(900, 450, 200, 20));
+
+        platforms.push_back(
+            Platform(1500, 350, 200, 20));
+
+        platforms.push_back(
+            Platform(2200, 450, 200, 20));
+
+        collectibles.push_back(
+            Collectible(450, 500));
+
+        collectibles.push_back(
+            Collectible(950, 400));
+
+        collectibles.push_back(
+            Collectible(1550, 300));
+
+        collectibles.push_back(
+            Collectible(2250, 400));
+
+        enemies.push_back(
+            Enemy(700, 600, 600, 1100));
+
+        enemies.push_back(
+            Enemy(1800, 600, 1700, 2200));
+
+        enemies.push_back(
+            Enemy(2600, 600, 2500, 3200));
+    }
+    else if (level == 3)
+    {
+        platforms.push_back(
+            Platform(0, 650, 4000, 70));
+
+        platforms.push_back(
+            Platform(500, 550, 200, 20));
+
+        platforms.push_back(
+            Platform(1200, 450, 200, 20));
+
+        platforms.push_back(
+            Platform(1900, 350, 200, 20));
+
+        platforms.push_back(
+            Platform(2700, 450, 200, 20));
+
+        collectibles.push_back(
+            Collectible(550, 500));
+
+        collectibles.push_back(
+            Collectible(1250, 400));
+
+        collectibles.push_back(
+            Collectible(1950, 300));
+
+        collectibles.push_back(
+            Collectible(2750, 400));
+
+        collectibles.push_back(
+            Collectible(3400, 500));
+
+        enemies.push_back(
+            Enemy(700, 600, 600, 1100));
+
+        enemies.push_back(
+            Enemy(1600, 600, 1500, 2100));
+
+        enemies.push_back(
+            Enemy(2500, 600, 2400, 3000));
+
+        enemies.push_back(
+            Enemy(3300, 600, 3200, 3800));
+    }
+}
+
 int main()
 {
     al_init();
@@ -33,7 +157,9 @@ int main()
     al_init_ttf_addon();
 
     ALLEGRO_DISPLAY* display =
-        al_create_display(SCREEN_W, SCREEN_H);
+        al_create_display(
+            SCREEN_W,
+            SCREEN_H);
 
     if (!display)
         return -1;
@@ -42,7 +168,8 @@ int main()
         al_create_event_queue();
 
     ALLEGRO_TIMER* timer =
-        al_create_timer(1.0 / 60.0);
+        al_create_timer(
+            1.0 / 60.0);
 
     ALLEGRO_FONT* font =
         al_create_builtin_font();
@@ -66,44 +193,17 @@ int main()
 
     Player player;
 
+    int currentLevel = 1;
+
     vector<Platform> platforms;
-
-    // Ground
-    platforms.push_back(
-        Platform(0, 650, 3000, 70));
-
-    // Floating platforms
-    platforms.push_back(
-        Platform(300, 550, 200, 20));
-
-    platforms.push_back(
-        Platform(700, 450, 200, 20));
-
-    platforms.push_back(
-        Platform(1200, 350, 200, 20));
-
-    platforms.push_back(
-        Platform(1800, 450, 250, 20));
-
-    platforms.push_back(
-        Platform(2400, 350, 250, 20));
-
     vector<Collectible> collectibles;
+    vector<Enemy> enemies;
 
-    collectibles.push_back(
-        Collectible(350, 500));
-
-    collectibles.push_back(
-        Collectible(750, 400));
-
-    collectibles.push_back(
-        Collectible(1250, 300));
-
-    collectibles.push_back(
-        Collectible(1850, 400));
-
-    collectibles.push_back(
-        Collectible(2450, 300));
+    loadLevel(
+        currentLevel,
+        platforms,
+        collectibles,
+        enemies);
 
     float cameraX = 0;
 
@@ -113,7 +213,9 @@ int main()
     {
         ALLEGRO_EVENT event;
 
-        al_wait_for_event(queue, &event);
+        al_wait_for_event(
+            queue,
+            &event);
 
         switch (event.type)
         {
@@ -167,22 +269,15 @@ int main()
 
         case ALLEGRO_EVENT_TIMER:
 
-            // Horizontal movement
             if (keys[LEFT])
-            {
                 player.velX = -5;
-            }
             else if (keys[RIGHT])
-            {
                 player.velX = 5;
-            }
             else
-            {
                 player.velX = 0;
-            }
 
-            // Jump
-            if (keys[UP] && player.onGround)
+            if (keys[UP] &&
+                player.onGround)
             {
                 player.velY = -12;
                 player.onGround = false;
@@ -190,10 +285,8 @@ int main()
 
             player.update();
 
-            // Assume not on ground until collision found
             player.onGround = false;
 
-            // Platform collision
             for (auto& platform : platforms)
             {
                 if (
@@ -204,15 +297,14 @@ int main()
                     player.velY >= 0)
                 {
                     player.y =
-                        platform.y - player.height;
+                        platform.y -
+                        player.height;
 
                     player.velY = 0;
-
                     player.onGround = true;
                 }
             }
 
-            // Update collectibles
             for (auto& c : collectibles)
             {
                 c.update();
@@ -232,14 +324,77 @@ int main()
                 if (distance < 40)
                 {
                     c.collected = true;
-
                     player.score += 100;
                 }
             }
 
-            // Camera follows player
+            bool allCollected = true;
+
+            for (auto& c : collectibles)
+            {
+                if (!c.collected)
+                {
+                    allCollected = false;
+                    break;
+                }
+            }
+
+            if (allCollected)
+            {
+                currentLevel++;
+
+                player.x = 100;
+                player.y = 300;
+
+                if (currentLevel <= 3)
+                {
+                    loadLevel(
+                        currentLevel,
+                        platforms,
+                        collectibles,
+                        enemies);
+                }
+                else
+                {
+                    running = false;
+                }
+            }
+
+            for (auto& enemy : enemies)
+            {
+                enemy.update();
+            }
+
+            for (auto& enemy : enemies)
+            {
+                bool collision =
+                    player.x < enemy.x + enemy.width &&
+                    player.x + player.width > enemy.x &&
+                    player.y < enemy.y + enemy.height &&
+                    player.y + player.height > enemy.y;
+
+                if (collision &&
+                    player.invincibilityFrames == 0)
+                {
+                    player.health -= 10;
+
+                    player.invincibilityFrames = 60;
+
+                    if (player.health < 0)
+                    {
+                        player.health = 0;
+                    }
+                }
+            }
+
+            if (player.health <= 0)
+            {
+                running = false;
+            }
+
             cameraX =
-                player.x - SCREEN_W / 2;
+                player.x -
+                SCREEN_W / 2;
 
             if (cameraX < 0)
             {
@@ -258,22 +413,23 @@ int main()
             al_clear_to_color(
                 al_map_rgb(40, 40, 70));
 
-            // Draw platforms
             for (auto& platform : platforms)
             {
                 platform.draw(cameraX);
             }
 
-            // Draw collectibles
             for (auto& c : collectibles)
             {
                 c.draw(cameraX);
             }
 
-            // Draw player
+            for (auto& enemy : enemies)
+            {
+                enemy.draw(cameraX);
+            }
+
             player.draw(cameraX);
 
-            // Status Bar
             al_draw_filled_rectangle(
                 0,
                 0,
@@ -298,6 +454,15 @@ int main()
                 0,
                 "Health: %d",
                 player.health);
+
+            al_draw_textf(
+                font,
+                al_map_rgb(255, 255, 255),
+                450,
+                10,
+                0,
+                "Level: %d",
+                currentLevel);
 
             al_flip_display();
         }

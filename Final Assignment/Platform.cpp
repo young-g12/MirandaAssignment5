@@ -22,6 +22,5 @@ void Platform::draw(float cameraX)
         y,
         x + width - cameraX,
         y + height,
-        al_map_rgb(120, 120, 120)
-    );
+        al_map_rgb(120, 120, 120));
 }

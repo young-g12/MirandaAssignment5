@@ -30,6 +30,5 @@ void Collectible::draw(float cameraX)
         x - cameraX,
         y,
         size,
-        al_map_rgb(255, 215, 0)
-    );
+        al_map_rgb(255, 215, 0));
 }
