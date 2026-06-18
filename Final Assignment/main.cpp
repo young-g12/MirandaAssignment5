@@ -1,11 +1,15 @@
 #include <vector>
 #include <cmath>
+#include <cstdio>
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
+#include <allegro5/allegro_audio.h>
+#include <allegro5/allegro_acodec.h>
+
 
 #include "Player.h"
 #include "Platform.h"
@@ -161,6 +165,9 @@ int main()
 {
     al_init();
     al_init_image_addon();
+    al_install_audio();
+    al_init_acodec_addon();
+    al_reserve_samples(16);
     al_install_keyboard();
 
     al_init_primitives_addon();
@@ -181,9 +188,53 @@ int main()
     ALLEGRO_TIMER* timer =
         al_create_timer(
             1.0 / 60.0);
-
     ALLEGRO_FONT* font =
-        al_create_builtin_font();
+        al_load_ttf_font(
+            "C:/Users/gmira/source/repos/Final Assignment/x64/Debug/PixelifySans-VariableFont_wght.ttf",
+            18,
+            0);
+
+    if (!font)
+    {
+        printf("FAILED TO LOAD FONT\n");
+        font = al_create_builtin_font();
+    }
+
+    ALLEGRO_SAMPLE* music =
+        al_load_sample(
+            "C:/Users/gmira/source/repos/Final Assignment/x64/Debug/background.wav");
+
+    ALLEGRO_SAMPLE* collectSound =
+        al_load_sample(
+            "C:/Users/gmira/source/repos/Final Assignment/x64/Debug/collect.wav");
+
+    if (!music)
+    {
+        printf("FAILED TO LOAD MUSIC\n");
+    }
+    else
+    {
+        printf("MUSIC LOADED\n");
+
+        al_play_sample(
+            music,
+            0.5,
+            0.0,
+            1.0,
+            ALLEGRO_PLAYMODE_LOOP,
+            nullptr);
+    }
+
+    if (!collectSound)
+    {
+        printf("FAILED TO LOAD COLLECT SOUND\n");
+    }
+    else
+    {
+        printf("COLLECT SOUND LOADED\n");
+    }
+
+  
 
     al_register_event_source(
         queue,
@@ -356,7 +407,17 @@ int main()
                     if (distance < 40)
                     {
                         c.collected = true;
+
+                        al_play_sample(
+                            collectSound,
+                            1.0,
+                            0.0,
+                            1.0,
+                            ALLEGRO_PLAYMODE_ONCE,
+                            nullptr);
+
                         player.score += 100;
+                    
                     }
                 }
 
@@ -461,7 +522,7 @@ int main()
                     SCREEN_W / 2,
                     250,
                     ALLEGRO_ALIGN_CENTER,
-                    "Collect all coins");
+                    "Collect all stones");
 
                 al_draw_text(
                     font,
@@ -605,6 +666,8 @@ int main()
         }
     }
 
+    al_destroy_sample(music);
+    al_destroy_sample(collectSound);
     al_destroy_font(font);
     al_destroy_timer(timer);
     al_destroy_event_queue(queue);

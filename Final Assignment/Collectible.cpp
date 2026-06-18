@@ -15,6 +15,8 @@ Collectible::Collectible(
 
     collected = false;
 
+    rotation = 0;
+
     sprite =
         al_load_bitmap(
             "C:/Users/gmira/source/repos/Final Assignment/x64/Debug/Rock1.png");
@@ -29,32 +31,26 @@ Collectible::Collectible(
 
 void Collectible::update()
 {
-    angle += 0.05f;
+    rotation += 0.05f;
 }
 
 void Collectible::draw(float cameraX)
 {
-    if (collected)
+    if (!collected)
     {
-        return;
-    }
-
-    if (sprite)
-    {
-        al_draw_scaled_bitmap(
+        al_draw_scaled_rotated_bitmap(
             sprite,
 
-            0,
-            0,
+            al_get_bitmap_width(sprite) / 2,
+            al_get_bitmap_height(sprite) / 2,
 
-            al_get_bitmap_width(sprite),
-            al_get_bitmap_height(sprite),
+            x - cameraX,
+            y,
 
-            x - cameraX - 20,
-            y - 20,
+            2.5,
+            2.5,
 
-            40,
-            40,
+            rotation,
 
             0);
     }

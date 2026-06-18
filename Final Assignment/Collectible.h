@@ -16,6 +16,8 @@ public:
 
     ALLEGRO_BITMAP* sprite;
 
+    float rotation;
+
     Collectible(
         float px,
         float py);
