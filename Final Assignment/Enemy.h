@@ -1,3 +1,4 @@
+// Gil Miranda
 #pragma once
 #include <allegro5/allegro.h>
 
@@ -21,13 +22,16 @@ public:
     int currentFrame;
     int frameTimer;
 
+    // Constructor that sets the enemy position and patrol boundaries.
     Enemy(
         float startX,
         float startY,
         float left,
         float right);
 
+    // Updates enemy movement and animation.
     void update();
 
+    // Draws the enemy on the screen.
     void draw(float cameraX);
 };

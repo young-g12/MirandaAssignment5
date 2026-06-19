@@ -1,3 +1,4 @@
+// Gil Miranda
 #include "Player.h"
 
 
@@ -26,6 +27,7 @@ Player::Player()
     currentFrame = 0;
     frameTimer = 0;
 
+    // Load the player's sprite sheet.
     idleSprite =
         al_load_bitmap(
             "C:/Users/gmira/source/repos/Final Assignment/x64/Debug/Dude_Monster_Idle_4.png");
@@ -69,6 +71,7 @@ void Player::update()
     }
 }
 
+// Draws the player sprite on the screen.
 void Player::draw(float cameraX)
 {
     if (idleSprite)
@@ -91,6 +94,7 @@ void Player::draw(float cameraX)
     }
     else
     {
+        // Draw a green rectangle if the sprite fails to load.
         al_draw_filled_rectangle(
             x - cameraX,
             y,

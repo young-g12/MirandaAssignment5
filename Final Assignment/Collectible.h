@@ -1,3 +1,4 @@
+//Gil Miranda
 #pragma once
 #include <allegro5/allegro.h>
 
@@ -10,6 +11,7 @@ public:
 
     float size;
 
+    // Tracks whether the collectible has been collected.
     bool collected;
 
     float angle;
@@ -18,6 +20,7 @@ public:
 
     float rotation;
 
+    // Constructor that sets the starting position.
     Collectible(
         float px,
         float py);

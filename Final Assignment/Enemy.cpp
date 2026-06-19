@@ -1,9 +1,11 @@
+// Gil Miranda
 #include "Enemy.h"
 
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_image.h>
 #include <cstdio>
 
+// Constructor that initializes the enemy.
 Enemy::Enemy(
     float startX,
     float startY,
@@ -21,6 +23,7 @@ Enemy::Enemy(
 
     speed = 2;
 
+    // Load the enemy sprite sheet.
     sprite =
         al_load_bitmap(
             "C:/Users/gmira/source/repos/Final Assignment/x64/Debug/Pink_Monster_Walk_6.png");
@@ -29,6 +32,7 @@ Enemy::Enemy(
     frameTimer = 0;
 }
 
+// Updates enemy movement and animation.
 void Enemy::update()
 {
     x += speed;
@@ -41,6 +45,7 @@ void Enemy::update()
 
     frameTimer++;
 
+    // Change animation frame every 8 updates.
     if (frameTimer >= 8)
     {
         frameTimer = 0;
@@ -54,6 +59,7 @@ void Enemy::update()
     }
 }
 
+// Draws the enemy on the screen.
 void Enemy::draw(float cameraX)
 {
     if (sprite)
@@ -77,6 +83,7 @@ void Enemy::draw(float cameraX)
     }
     else
     {
+        // Draw a red rectangle if the sprite is missing.
         al_draw_filled_rectangle(
             x - cameraX,
             y,

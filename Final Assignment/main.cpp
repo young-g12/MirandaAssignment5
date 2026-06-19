@@ -1,3 +1,4 @@
+// Gil Miranda
 #include <vector>
 #include <cmath>
 #include <cstdio>
@@ -38,6 +39,7 @@ enum Keys
     ENTER
 };
 
+// Creates all platforms, collectibles, and enemies for each level.
 void loadLevel(
     int level,
     vector<Platform>& platforms,
@@ -161,6 +163,7 @@ void loadLevel(
     }
 }
 
+// Initializes Allegro, audio, fonts, display, and game resources.
 int main()
 {
     al_init();
@@ -498,6 +501,7 @@ int main()
                 break;
             }
         }
+        // Draws the current game screen based on the active game state.
         if (redraw &&
             al_is_event_queue_empty(queue))
         {

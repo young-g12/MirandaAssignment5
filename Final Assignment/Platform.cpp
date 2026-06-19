@@ -2,6 +2,7 @@
 
 #include <allegro5/allegro_primitives.h>
 
+// Constructor that initializes the platform's position and size.
 Platform::Platform(
     float px,
     float py,
@@ -15,6 +16,7 @@ Platform::Platform(
     height = h;
 }
 
+// Draws the platform on the screen.
 void Platform::draw(float cameraX)
 {
     al_draw_filled_rectangle(
